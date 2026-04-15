@@ -1,0 +1,45 @@
+# Ingeniería de Soluciones con Inteligencia Artificial
+# Dependencias del curso
+
+# --- LLMs y APIs ---
+openai>=1.0.0
+langchain>=1.0.0
+langchain-openai>=0.3.0
+langchain-community>=0.3.0
+langsmith>=0.3.0
+langgraph>=0.3.0
+
+# --- Agentes ---
+crewai>=0.100.0
+crewai-tools>=0.38.0
+
+# --- RAG y Embeddings ---
+faiss-cpu>=1.7.0
+tiktoken>=0.5.0
+
+# --- Data y Analisis ---
+pandas>=2.0.0
+numpy>=1.24.0
+scipy>=1.10.0
+scikit-learn>=1.3.0
+
+# --- Visualizacion ---
+matplotlib>=3.7.0
+plotly>=5.15.0
+seaborn>=0.12.0
+
+# --- Web y Apps ---
+streamlit>=1.30.0
+requests>=2.31.0
+httpx>=0.25.0
+
+# --- Utilidades ---
+python-dotenv>=1.0.0
+pydantic>=2.0.0
+
+# --- Jupyter ---
+jupyter>=1.0.0
+ipykernel>=6.0.0
+
+# --- Testing ---
+pytest>=7.0.0
