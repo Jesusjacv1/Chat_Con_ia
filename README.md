@@ -1,20 +1,46 @@
-# Chat_Con_ia
-mi proyecto se basara en una empresa destinada a servicios de vulcanización, contara con sus servicios básicos y detallados.
+#  Chat_Con_IA — Vulcanizadora Inteligente
 
-<<<<<<< HEAD
-1. Actualizacion de mi Proyecto Intregue nuevos metodos que serian zero-shot y few shot que hace que la ia siga diferentes instrucciones
-en el codigo esta ordenado en un nuevo notebook que es el Notebook1 en el cual me di cuenta que puede funcionar de forma un poco mas optima.
+Sistema de atención al cliente basado en Inteligencia Artificial para una empresa de vulcanización y neumáticos. Permite consultar servicios, precios y disponibilidad mediante un agente conversacional.
 
-1.2- Agregue el Chain_of_tougth, me da una mejor respuesta acorde a lo que estoy buscando a la empresa.
-
-1.3- Agregue el RAG, un metodo mas estricto que sigue acorde a un documento, en el cual la ia se guia por ese mismo documento, y entrega una respuesta clara y objetiva,
-dando como resultado un buena respuesta, y siempre en contexto, ya que preguntas que no tengan el contexto, responde como debe.
-
-=======
-1. Actualizacion de mi Proyecto Intregue nuevos metodos que serian zero-shot y few shot que hace que la ia siga difentes instrucciones
-en el codigo esta ordenado en un nuevo notebook que es el Notebook1 en el cual me di cuenta que puede funcionar de forma un poco mas optima.
-
-1.2- Agregue el Chain_of_tougth, me da una mejor respuesta acorde alo que estoy buscando a la empresa.
->>>>>>> a5daaa598022f7168c34d788e5b576067918c279
+---
 
 
+##  Notebooks del Proyecto
+
+### RAG1 — Sistema Base de Consultas
+Implementa el sistema RAG (Retrieval-Augmented Generation) orientado a la vulcanizadora. El agente responde preguntas sobre servicios, precios y horarios usando un contexto estructurado. Incluye técnicas de **zero-shot** y **few-shot prompting** para mejorar la precisión de las respuestas.
+
+### Notebook1 — Zero-Shot y Few-Shot
+Exploración de técnicas de prompting. Zero-shot permite responder sin ejemplos previos, mientras que few-shot guía al modelo con ejemplos específicos del dominio de vulcanización.
+
+### Notebook_Chain_of_Thought
+Implementación de cadena de pensamiento (Chain of Thought) para que el agente razone paso a paso antes de responder, mejorando la calidad de respuestas complejas.
+
+### RAG3 — Observabilidad y Métricas
+Sistema de monitoreo del agente con logging estructurado, recolección de métricas (tiempo de respuesta, tokens usados, tasa de errores) y clasificación automática de consultas por tipo de servicio.
+
+### RAG4 — Notificaciones por Email
+Módulo de envío automático de reportes por correo usando Gmail SMTP con diseño HTML profesional, incluyendo métricas del sistema y resumen de consultas atendidas.
+
+### RAG5 — Seguridad y Ética *(en desarrollo)*
+Capa de seguridad con detección de PII, filtro ético por categorías, rate limiting y sanitización contra prompt injection.
+
+---
+
+## 🛠️ Tecnologías
+
+| Tecnología | Uso |
+|---|---|
+| Python 3.11 | Lenguaje principal |
+| GitHub Models (GPT-4.1) | Modelo de lenguaje |
+| LangSmith | Trazabilidad de agentes |
+| Flask | Interfaz web *(en desarrollo)* |
+| Gmail SMTP | Notificaciones por email |
+
+---
+
+## 👤 Autor
+
+**Jesús Cárdenas**  
+Estudiante de Ingeniería en Informática — Duoc UC Puerto Montt  
+GitHub: [@Jesusjacv1](https://github.com/Jesusjacv1)
