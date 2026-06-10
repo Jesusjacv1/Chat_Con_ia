@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagrama de Arquitectura - Chat_Con_IA Vulcanizadora</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #ffffff;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00d4ff, #7b2ff7, #ff6b9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 1.8rem;
+            margin: 50px 0 25px;
+            color: #00d4ff;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #a0a0b8;
+            margin-bottom: 30px;
+        }
+
+        .diagram-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .mermaid {
+            background: transparent !important;
+        }
+
+        .mermaid svg text {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+            font-weight: 600 !important;
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .info-table thead {
+            background: linear-gradient(90deg, #7b2ff7, #00d4ff);
+        }
+
+        .info-table th {
+            padding: 15px 20px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-align: left;
+            color: #ffffff;
+        }
+
+        .info-table td {
+            padding: 14px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.95rem;
+        }
+
+        .info-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-security { background: #ff6b9d; color: #fff; }
+        .badge-agent { background: #7b2ff7; color: #fff; }
+        .badge-retrieval { background: #00d4ff; color: #000; }
+        .badge-llm { background: #ffd700; color: #000; }
+        .badge-obs { background: #00e676; color: #000; }
+        .badge-email { background: #ff9100; color: #000; }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .legend-color {
+            width: 18px;
+            height: 18px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Chat_Con_IA — Vulcanizadora Inteligente</h1>
+        <p class="subtitle">Diagrama de Arquitectura del Sistema</p>
+
+        <!-- DIAGRAMA 1: Arquitectura General -->
+        <h2>📐 Diagrama de Arquitectura General</h2>
+        <div class="diagram-card">
+            <div class="mermaid">
+                graph TB
+                    subgraph 👤 USUARIO
+                        A[Cliente Final]:::user
+                    end
+
+                    subgraph 🖥️ INTERFAZ WEB
+                        B[Streamlit / Flask<br/>Aplicación Web]:::interface
+                    end
+
+                    subgraph 🛡️ CAPA DE SEGURIDAD
+                        C1[🔍 Detección de PII]:::security
+                        C2[🚫 Filtro Ético]:::security
+                        C3[⏱️ Rate Limiting<br/>10 req/min]:::security
+                        C4[💉 Anti Prompt Injection]:::security
+                    end
+
+                    subgraph 🤖 AGENTE RAG
+                        D1[🧠 LangChain / LangGraph<br/>Orquestador]:::agent
+                        D2[💭 Chain of Thought<br/>Motor de Razonamiento]:::agent
+                        D3[📝 Prompts Zero-Shot<br/>y Few-Shot]:::agent
+                    end
+
+                    subgraph 🔎 SISTEMA RAG
+                        E1[📦 FAISS<br/>Vector Store]:::retrieval
+                        E2[🔢 Embeddings<br/>tiktoken]:::retrieval
+                        E3[📚 Base de Conocimiento<br/>Servicios, Precios, Horarios]:::retrieval
+                    end
+
+                    subgraph 🌐 MODELO IA
+                        F[⚡ GitHub Models<br/>GPT-4.1 via Azure]:::llm
+                    end
+
+                    subgraph 📊 OBSERVABILIDAD
+                        G1[🔭 LangSmith<br/>Trazabilidad]:::observability
+                        G2[📝 Logging<br/>Estructurado]:::observability
+                        G3[📈 Métricas<br/>Tiempo, Tokens, Errores]:::observability
+                        G4[🏷️ Clasificación<br/>de Consultas]:::observability
+                    end
+
+                    subgraph 📧 NOTIFICACIONES
+                        H1[📄 Generador<br/>Reportes HTML]:::email
+                        H2[📬 Gmail SMTP]:::email
+                        H3[✉️ Email Destino]:::email
+                    end
+
+                    A --> B
+                    B --> C1
+                    C1 --> C2
+                    C2 --> C3
+                    C3 --> C4
+                    C4 --> D1
+                    D1 --> D2
+                    D2 --> D3
+                    D3 --> E1
+                    D3 --> F
+                    E1 <--> E2
+                    E2 <--> E3
+                    D3 <--> E1
+                    F --> G1
+                    G1 --> G2
+                    G2 --> G3
+                    G3 --> G4
+                    G4 --> H1
+                    H1 --> H2
+                    H2 --> H3
+
+                    classDef user fill:#1a73e8,stroke:#4da6ff,color:#fff,font-size:14px,font-weight:bold,stroke-width:3px
+                    classDef interface fill:#ff9800,stroke:#ffcc80,color:#fff,font-size:14px,font-weight:bold,stroke-width:3px
+                    classDef security fill:#e53935,stroke:#ff6b6b,color:#fff,font-size:14px,font-weight:bold,stroke-width:3px
+                    classDef agent fill:#9c27b0,stroke:#ce93d8,color:#fff,font-size:14px,font-weight:bold,stroke-width:3px
+                    classDef retrieval fill:#00bcd4,stroke:#4dd0e1,color:#000,font-size:14px,font-weight:bold,stroke-width:3px
+                    classDef llm fill:#ffd600,stroke:#ffe082,color:#000,font-size:14px,font-weight:bold,stroke-width:3px
+                    classDef observability fill:#00c853,stroke:#69f0ae,color:#000,font-size:14px,font-weight:bold,stroke-width:3px
+                    classDef email fill:#ff6d00,stroke:#ffab40,color:#fff,font-size:14px,font-weight:bold,stroke-width:3px
+            </div>
+        </div>
+
+        <!-- DIAGRAMA 2: Flujo de Secuencia -->
+        <h2>🔄 Flujo de Consulta - Secuencia</h2>
+        <div class="diagram-card">
+            <div class="mermaid">
+                sequenceDiagram
+                    autonumber
+                    participant U as 👤 Usuario
+                    participant UI as 🖥️ Interfaz Web
+                    participant SEC as 🛡️ Seguridad
+                    participant AGT as 🤖 Agente RAG
+                    participant VDB as 📦 FAISS Vector DB
+                    participant LLM as ⚡ GPT-4.1
+                    participant OBS as 📊 LangSmith
+                    participant EMAIL as 📧 Gmail SMTP
+
+                    U->>UI: 📩 Consulta sobre servicio
+                    UI->>SEC: 🔒 Validar entrada
+                    SEC->>SEC: 🔍 Detección PII
+                    SEC->>SEC: ⏱️ Rate Limiting
+                    SEC->>SEC: 💉 Anti Injection
+                    SEC->>AGT: ✅ Consulta segura
+                    AGT->>VDB: 🔎 Buscar contexto relevante
+                    VDB-->>AGT: 📄 Documentos similares
+                    AGT->>AGT: 💭 Chain of Thought
+                    AGT->>LLM: 📤 Prompt con contexto
+                    LLM-->>AGT: 💬 Respuesta generada
+                    AGT->>OBS: 📊 Registrar traza y métricas
+                    AGT-->>UI: 💬 Respuesta al usuario
+                    UI-->>U: 🖨️ Mostrar respuesta
+
+                    note over OBS,EMAIL: 📈 Reportes periódicos
+                    OBS->>EMAIL: 📊 Enviar resumen métricas
+                    EMAIL-->>U: ✉️ Email con reporte
+            </div>
+        </div>
+
+        <!-- DIAGRAMA 3: Tecnologías -->
+        <h2>🛠️ Mapa de Tecnologías</h2>
+        <div class="diagram-card">
+            <div class="mermaid">
+                graph LR
+                    subgraph 🎨 FRONTEND
+                        A1[🌐 Streamlit]:::frontend
+                        A2[🌐 Flask]:::frontend
+                    end
+
+                    subgraph ⚙️ BACKEND PYTHON
+                        B1[🔗 LangChain]:::backend
+                        B2[🔀 LangGraph]:::backend
+                        B3[👥 CrewAI]:::backend
+                        B4[✅ Pydantic]:::backend
+                        B5[📊 Pandas / NumPy]:::backend
+                    end
+
+                    subgraph 💾 ALMACENAMIENTO
+                        C1[📦 FAISS CPU<br/>Vector Store]:::storage
+                        C2[🔑 .env Config<br/>Variables]:::storage
+                    end
+
+                    subgraph ☁️ SERVICIOS EXTERNOS
+                        D1[🧠 GitHub Models API]:::external
+                        D2[☁️ Azure Inference]:::external
+                        D3[🔭 LangSmith Cloud<br/>Trazabilidad]:::external
+                        D4[📬 Gmail SMTP<br/>Email]:::external
+                    end
+
+                    A1 --> B1
+                    A2 --> B1
+                    B1 --> B2
+                    B2 --> B3
+                    B3 --> C1
+                    B1 --> C1
+                    B1 --> D1
+                    D1 --> D2
+                    B1 --> D3
+                    B4 --> D4
+
+                    classDef frontend fill:#ff9800,stroke:#ffb74d,color:#fff,font-size:13px,font-weight:bold,stroke-width:3px
+                    classDef backend fill:#9c27b0,stroke:#ce93d8,color:#fff,font-size:13px,font-weight:bold,stroke-width:3px
+                    classDef storage fill:#00bcd4,stroke:#4dd0e1,color:#000,font-size:13px,font-weight:bold,stroke-width:3px
+                    classDef external fill:#ffd600,stroke:#ffe082,color:#000,font-size:13px,font-weight:bold,stroke-width:3px
+            </div>
+        </div>
+
+        <!-- TABLA DE COMPONENTES -->
+        <h2>📋 Componentes del Sistema</h2>
+        <div class="diagram-card">
+            <table class="info-table">
+                <thead>
+                    <tr>
+                        <th>Capa</th>
+                        <th>Componente</th>
+                        <th>Notebook</th>
+                        <th>Tecnología</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="badge badge-agent">Interfaz</span></td>
+                        <td>Aplicación Web</td>
+                        <td>-</td>
+                        <td>Streamlit / Flask</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-security">Seguridad</span></td>
+                        <td>Detección PII, Filtros, Rate Limit</td>
+                        <td>RAG5</td>
+                        <td>Python, AST</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-agent">Agente</span></td>
+                        <td>Orquestador RAG, Chain of Thought</td>
+                        <td>RAG1, Chain_of_Thought</td>
+                        <td>LangChain, LangGraph</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-retrieval">Retrieval</span></td>
+                        <td>Vector Store, Embeddings</td>
+                        <td>RAG1</td>
+                        <td>FAISS, tiktoken</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-llm">LLM</span></td>
+                        <td>Generación de respuestas</td>
+                        <td>Todos</td>
+                        <td>GPT-4.1 via Azure</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-obs">Observabilidad</span></td>
+                        <td>Trazas, Métricas, Logging</td>
+                        <td>RAG3</td>
+                        <td>LangSmith</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-email">Notificaciones</span></td>
+                        <td>Reportes por email</td>
+                        <td>RAG4</td>
+                        <td>Gmail SMTP, HTML</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- LEYENDA -->
+        <h2>🎨 Leyenda de Colores</h2>
+        <div class="diagram-card">
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #1a73e8;"></div>
+                    <span>Usuario</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ff9800;"></div>
+                    <span>Interfaz Web</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #e53935;"></div>
+                    <span>Seguridad</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #9c27b0;"></div>
+                    <span>Agente RAG</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #00bcd4;"></div>
+                    <span>Sistema RAG</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ffd600;"></div>
+                    <span>Modelo IA</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #00c853;"></div>
+                    <span>Observabilidad</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ff6d00;"></div>
+                    <span>Notificaciones</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#7b2ff7',
+                primaryTextColor: '#ffffff',
+                primaryBorderColor: '#ce93d8',
+                lineColor: '#00d4ff',
+                secondaryColor: '#1a73e8',
+                tertiaryColor: '#ff9800',
+                fontSize: '16px',
+                fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif'
+            },
+            sequence: {
+                actorMargin: 80,
+                messageMargin: 60,
+                messageAlign: 'center',
+                mirrorActors: false,
+                fontSize: 16,
+                fontWeight: 600,
+                actorFontSize: 16,
+                actorFontWeight: 700,
+                noteFontSize: 14,
+                noteFontWeight: 600
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis',
+                nodeSpacing: 50,
+                rankSpacing: 50,
+                diagramPadding: 20
+            },
+            securityLevel: 'loose'
+        });
+    </script>
+</body>
+</html>
