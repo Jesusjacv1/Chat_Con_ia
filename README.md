@@ -25,6 +25,15 @@ Módulo de envío automático de reportes por correo usando Gmail SMTP con dise�
 ### RAG5 — Seguridad y Ética *(en desarrollo)*
 Capa de seguridad con detección de PII, filtro ético por categorías, rate limiting y sanitización contra prompt injection.
 
+
+### RAG5 — Seguridad y Ética
+Capa de seguridad completa del agente con:
+- **Evaluación matemática segura** usando AST sin `eval()` peligroso
+- **Detección y sanitización de PII** (correos, teléfonos, RUT, tarjetas)
+- **Filtro ético** por categorías (violencia, manipulación, contenido ilegal)
+- **Rate limiting** para prevenir abuso (máx. 10 peticiones por minuto)
+- **Sanitización contra prompt injection** bloqueando instrucciones maliciosas
+
 ---
 
 ## 🛠️ Tecnologías
