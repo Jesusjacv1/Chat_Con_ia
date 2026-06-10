@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orquestación de Componentes - Chat_Con_IA Vulcanizadora</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #ffffff;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00d4ff, #7b2ff7, #ff6b9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 1.8rem;
+            margin: 50px 0 25px;
+            color: #00d4ff;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #a0a0b8;
+            margin-bottom: 30px;
+        }
+
+        .diagram-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .mermaid {
+            background: transparent !important;
+            display: flex;
+            justify-content: center;
+        }
+
+        .mermaid svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .mermaid svg text {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+            font-weight: 600 !important;
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .info-table thead {
+            background: linear-gradient(90deg, #7b2ff7, #00d4ff);
+        }
+
+        .info-table th {
+            padding: 15px 20px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-align: left;
+            color: #ffffff;
+        }
+
+        .info-table td {
+            padding: 14px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.95rem;
+        }
+
+        .info-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-orchestrator { background: #7b2ff7; color: #fff; }
+        .badge-gate { background: #ff6b9d; color: #fff; }
+        .badge-retrieval { background: #00d4ff; color: #000; }
+        .badge-llm { background: #ffd700; color: #000; }
+        .badge-obs { background: #00e676; color: #000; }
+        .badge-email { background: #ff9100; color: #000; }
+        .badge-interface { background: #ff9800; color: #fff; }
+        .badge-external { background: #e040fb; color: #fff; }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .legend-color {
+            width: 18px;
+            height: 18px;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8rem; }
+            h2 { font-size: 1.4rem; }
+            .diagram-card { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1> Chat_Con_IA — Vulcanizadora Inteligente</h1>
+        <p class="subtitle">Diagrama de Orquestación de Componentes</p>
+
+        <!-- DIAGRAMA 1: Orquestación General -->
+        <h2> Orquestación General de Componentes</h2>
+        <div class="diagram-card">
+            <div class="mermaid">
+                graph TB
+                    ORQ[" Orquestador Central<br/>LangChain / LangGraph"]:::orchestrator
+
+                    subgraph " INTERFAZ DE ENTRADA"
+                        WEB["Streamlit / Flask<br/>App Web"]:::interface
+                        UI["Renderizado UI<br/>y Gestión de Sesión"]:::interface
+                    end
+
+                    subgraph " CADENA DE SEGURIDAD"
+                        PII[" Detección de PII<br/>(RUT, Email, Teléfono)"]:::gate
+                        ETHIC[" Filtro Ético<br/>(Contenido Bloqueado)"]:::gate
+                        RATE[" Rate Limiting<br/>(10 req / min)"]:::gate
+                        INJ[" Anti Prompt Injection<br/>(Patrones Maliciosos)"]:::gate
+                    end
+
+                    subgraph " MOTOR RAG"
+                        EMB[" Embeddings<br/>(text-embedding-3-small)"]:::retrieval
+                        VDB[" FAISS Vector Store<br/>(Búsqueda Semántica)"]:::retrieval
+                        KB[" Base de Conocimiento<br/>(Servicios, Precios, Diagnósticos)"]:::retrieval
+                        SPLIT[" Splitter de Texto<br/>(Chunks 400 chars)"]:::retrieval
+                    end
+
+                    subgraph " MOTOR DE RAZONAMIENTO"
+                        COT[" Chain of Thought<br/>(Razonamiento Paso a Paso)"]:::llm
+                        ZS_FS[" Prompts Zero-Shot<br/>y Few-Shot"]:::llm
+                        LLM[" GPT-4.1<br/>(GitHub Models / Azure)"]:::llm
+                        MEM[" Memoria Conversacional<br/>(Historial de Chat)"]:::llm
+                    end
+
+                    subgraph " OBSERVABILIDAD"
+                        TRACE[" LangSmith<br/>(Trazabilidad de Prompts)"]:::obs
+                        METRIC[" Recolector de Métricas<br/>(Tiempo, Tokens, Errores)"]:::obs
+                        CLASSIF[" Clasificador de Consultas<br/>(Parche, Cambio, Alineación)"]:::obs
+                        LOG[" Logging Estructurado<br/>(Módulos y Niveles)"]:::obs
+                    end
+
+                    subgraph " NOTIFICACIONES"
+                        REP[" Generador Reportes HTML<br/>(Dashboard Métricas)"]:::email
+                        SMTP[" Gmail SMTP<br/>(Puerto 465 SSL)"]:::email
+                        DEST[" Email Destino<br/>(Admin/Taller)"]:::email
+                    end
+
+                    subgraph " HERRAMIENTAS DEL AGENTE"
+                        DIAG[" Diagnosticar Neumático<br/>(Síntoma → Causa)"]:::tool
+                        STOCK[" Consultar Stock<br/>(Medida, Marca, Tipo)"]:::tool
+                        SERV[" Registrar Servicio<br/>(Cliente, Patente)"]:::tool
+                    end
+
+                    WEB -->|1. Consulta del usuario| UI
+                    UI -->|2. Enruta consulta| ORQ
+
+                    ORQ -->|3. Orquesta seguridad| PII
+                    PII -->|4. Pasa| ETHIC
+                    ETHIC -->|5. Pasa| RATE
+                    RATE -->|6. Pasa| INJ
+                    INJ -->|7. Consulta segura| ORQ
+
+                    ORQ -->|8. Recupera contexto| VDB
+                    VDB -->|9. Chunks similares| ORQ
+                    EMB -->|10. Indexa vectores| VDB
+                    SPLIT -->|11. Divide textos| EMB
+                    KB -->|12. Fuente de datos| SPLIT
+
+                    ORQ -->|13. Orquesta razonamiento| COT
+                    COT -->|14. Prompt estructurado| ZS_FS
+                    ZS_FS -->|15. Consulta con contexto| LLM
+                    MEM -->|16. Historial de sesión| ZS_FS
+                    LLM -->|17. Respuesta generada| ORQ
+
+                    ORQ -->|18. Herramientas disponibles| DIAG
+                    ORQ -->|19. Stock disponible| STOCK
+                    ORQ -->|20. Registro solicitud| SERV
+
+                    ORQ -->|21. Registra traza| TRACE
+                    TRACE -->|22. Almacena| LOG
+                    LOG -->|23. Procesa| METRIC
+                    METRIC -->|24. Clasifica consulta| CLASSIF
+
+                    ORQ -->|25. Responde al usuario| UI
+
+                    CLASSIF -->|26. Reporte periódico| REP
+                    REP -->|27. Envía email| SMTP
+                    SMTP -->|28. Entrega a| DEST
+
+                    classDef orchestrator fill:#7b2ff7,stroke:#ce93d8,color:#fff,font-size:14px,font-weight:bold,stroke-width:3px
+                    classDef interface fill:#ff9800,stroke:#ffcc80,color:#fff,font-size:12px,font-weight:bold,stroke-width:2px
+                    classDef gate fill:#e53935,stroke:#ff6b6b,color:#fff,font-size:12px,font-weight:bold,stroke-width:2px
+                    classDef retrieval fill:#00bcd4,stroke:#4dd0e1,color:#000,font-size:12px,font-weight:bold,stroke-width:2px
+                    classDef llm fill:#ffd600,stroke:#ffe082,color:#000,font-size:12px,font-weight:bold,stroke-width:2px
+                    classDef obs fill:#00c853,stroke:#69f0ae,color:#000,font-size:12px,font-weight:bold,stroke-width:2px
+                    classDef email fill:#ff6d00,stroke:#ffab40,color:#fff,font-size:12px,font-weight:bold,stroke-width:2px
+                    classDef tool fill:#e040fb,stroke:#ea80fc,color:#fff,font-size:12px,font-weight:bold,stroke-width:2px
+            </div>
+        </div>
+
+        <!-- DIAGRAMA 2: Flujo de Orquestación Temporal -->
+        <h2> Flujo de Orquestación - Secuencia Temporal</h2>
+        <div class="diagram-card">
+            <div class="mermaid">
+                sequenceDiagram
+                    autonumber
+                    participant U as " Usuario"
+                    participant UI as " Interfaz Web"
+                    participant ORQ as " Orquestador<br/>Central"
+                    participant SEC as " Cadena<br/>Seguridad"
+                    participant RAG as " Motor RAG<br/>(FAISS)"
+                    participant LLM as " GPT-4.1"
+                    participant OBS as " LangSmith<br/>Observabilidad"
+                    participant EMAIL as " Gmail SMTP"
+
+                    U->>UI: Consulta sobre servicio
+                    UI->>ORQ: Enruta consulta
+                    ORQ->>SEC: Orquesta validaciones
+                    SEC->>SEC: Detecta PII, Filtro Ético
+                    SEC->>SEC: Rate Limiting, Anti Injection
+                    SEC-->>ORQ: Consulta validada
+
+                    ORQ->>RAG: Buscar contexto relevante
+                    RAG->>RAG: Embeddings + FAISS search
+                    RAG-->>ORQ: Top-K documentos
+
+                    ORQ->>ORQ: Chain of Thought<br/>Razonamiento estructurado
+                    ORQ->>LLM: Prompt con contexto + historial
+                    LLM-->>ORQ: Respuesta generada
+
+                    ORQ->>OBS: Registrar traza completa
+                    OBS->>OBS: Métricas, Logging, Clasificación
+
+                    ORQ-->>UI: Respuesta formateada
+                    UI-->>U: Mostrar resultado
+
+                    par Reporte periódico
+                        OBS->>EMAIL: Resumen de métricas
+                        EMAIL-->>U: Email con dashboard
+                    end
+            </div>
+        </div>
+
+        <!-- DIAGRAMA 3: Orquestación con Puntos de Decisión -->
+        <h2> Orquestación del Pipeline con Decisiones</h2>
+        <div class="diagram-card">
+            <div class="mermaid">
+                graph TD
+                    START([" Consulta del Usuario"]):::start
+                    PARSE["Analizar tipo de consulta"]:::process
+
+                    SEC_GATE{" Pasa validaciones<br/>de seguridad?"}:::decision
+                    PII_CHECK[" Detección PII<br/>(Email, RUT, Teléfono)"]:::gate
+                    ETHIC_CHECK[" Filtro Ético<br/>(Contenido prohibido)"]:::gate
+                    RATE_CHECK[" Rate Limiting<br/>(Token Bucket)"]:::gate
+                    INJ_CHECK[" Anti Prompt Injection<br/>(Patrones maliciosos)"]:::gate
+
+                    REJECT[" Consulta Bloqueada<br/>Registrar en LangSmith"]:::reject
+                    BLOCKED_RESP[" Devolver error<br/>al usuario"]:::reject
+
+                    QUERY_TYPE{" Tipo de<br/>consulta?"}:::decision
+                    RAG_PATH[" RAG: Búsqueda<br/>en conocimiento"]:::rag
+                    AGENT_PATH[" Agente: Usar<br/>herramientas"]:::agent
+
+                    VDB_CHECK{" Hay contexto<br/>relevante?"}:::decision
+                    FALLBACK[" Fallback: Respuesta<br/>sin contexto"]:::fallback
+                    BUILD_PROMPT["Construir prompt<br/>con contexto"]:::process
+
+                    COT_DEC{" Usar CoT?"}:::decision
+                    COT_PATH["Chain of Thought<br/>Razonamiento paso a paso"]:::cot
+                    DIRECT_PATH["Respuesta directa<br/>Zero-Shot"]:::direct
+
+                    LLM_CALL[" Consultar GPT-4.1<br/>(GitHub Models)"]:::llm_call
+
+                    LLM_OK{" Respuesta<br/>válida?"}:::decision
+                    RETRY[" Reintentar (max 3)<br/>con prompt corregido"]:::retry
+                    FAIL[" Error: Devolver<br/>mensaje genérico"]:::reject
+
+                    FORMAT["Formatear respuesta<br/>según tipo"]:::process
+                    OBS_LOG["Registrar en LangSmith<br/>Métricas + Trazas"]:::obs_log
+                    RESPOND[" Responder al usuario"]:::success
+
+                    START --> PARSE
+                    PARSE --> SEC_GATE
+
+                    SEC_GATE -->|"Inicia cadena"| PII_CHECK
+                    PII_CHECK --> ETHIC_CHECK
+                    ETHIC_CHECK --> RATE_CHECK
+                    RATE_CHECK --> INJ_CHECK
+                    INJ_CHECK -->|"Pasa"| QUERY_TYPE
+                    INJ_CHECK -->|"Bloquea"| REJECT
+                    RATE_CHECK -->|"Excede límite"| REJECT
+                    ETHIC_CHECK -->|"Contenido prohibido"| REJECT
+                    PII_CHECK -->|"PII detectada"| REJECT
+                    REJECT --> BLOCKED_RESP
+
+                    QUERY_TYPE -->|"Pregunta sobre servicios/precios"| RAG_PATH
+                    QUERY_TYPE -->|"Diagnóstico/stock/registro"| AGENT_PATH
+
+                    RAG_PATH --> VDB_CHECK
+                    VDB_CHECK -->|"Sí"| BUILD_PROMPT
+                    VDB_CHECK -->|"No"| FALLBACK
+                    FALLBACK --> BUILD_PROMPT
+
+                    AGENT_PATH --> LLM_CALL
+
+                    BUILD_PROMPT --> COT_DEC
+                    COT_DEC -->|"Sí (cálculos, diagnósticos)"| COT_PATH
+                    COT_DEC -->|"No (consultas simples)"| DIRECT_PATH
+                    COT_PATH --> LLM_CALL
+                    DIRECT_PATH --> LLM_CALL
+
+                    LLM_CALL --> LLM_OK
+                    LLM_OK -->|"Sí"| FORMAT
+                    LLM_OK -->|"No"| RETRY
+                    RETRY --> LLM_CALL
+                    RETRY -->|"Max intentos"| FAIL
+
+                    FORMAT --> OBS_LOG
+                    OBS_LOG --> RESPOND
+
+                    classDef start fill:#1a73e8,stroke:#4da6ff,color:#fff,font-size:13px,font-weight:bold,stroke-width:3px
+                    classDef process fill:#5c6bc0,stroke:#9fa8da,color:#fff,font-size:12px,font-weight:bold,stroke-width:2px
+                    classDef decision fill:#ffb300,stroke:#ffe082,color:#000,font-size:12px,font-weight:bold,stroke-width:2px
+                    classDef gate fill:#e53935,stroke:#ff6b6b,color:#fff,font-size:11px,font-weight:bold,stroke-width:2px
+                    classDef reject fill:#b71c1c,stroke:#ef5350,color:#fff,font-size:12px,font-weight:bold,stroke-width:3px
+                    classDef rag fill:#00bcd4,stroke:#4dd0e1,color:#000,font-size:12px,font-weight:bold,stroke-width:2px
+                    classDef agent fill:#7b2ff7,stroke:#ce93d8,color:#fff,font-size:12px,font-weight:bold,stroke-width:2px
+                    classDef fallback fill:#ff6d00,stroke:#ffab40,color:#fff,font-size:12px,font-weight:bold,stroke-width:2px
+                    classDef cot fill:#ffd600,stroke:#ffe082,color:#000,font-size:12px,font-weight:bold,stroke-width:2px
+                    classDef direct fill:#ffd600,stroke:#ffe082,color:#000,font-size:12px,font-weight:bold,stroke-width:2px
+                    classDef llm_call fill:#9c27b0,stroke:#ce93d8,color:#fff,font-size:13px,font-weight:bold,stroke-width:3px
+                    classDef retry fill:#f57c00,stroke:#ffb74d,color:#fff,font-size:12px,font-weight:bold,stroke-width:2px
+                    classDef obs_log fill:#00c853,stroke:#69f0ae,color:#000,font-size:12px,font-weight:bold,stroke-width:2px
+                    classDef success fill:#1b5e20,stroke:#66bb6a,color:#fff,font-size:13px,font-weight:bold,stroke-width:3px
+            </div>
+        </div>
+
+        <!-- DIAGRAMA 4: Orquestación del Agente Multi-Herramienta -->
+        <h2> Orquestación del Agente con Herramientas</h2>
+        <div class="diagram-card">
+            <div class="mermaid">
+                graph TB
+                    subgraph " ORQUESTACIÓN DEL AGENTE"
+                        AGENT[" Agente con<br/>Function Calling"]:::center
+                        STATE[" Estado de<br/>Conversación"]:::state
+                        MEMORY[" Memoria:<br/>Historial de Turnos"]:::state
+                    end
+
+                    subgraph " HERRAMIENTAS ORQUESTADAS"
+                        TOOL1[" 🔧 diagnosticar_problema_neumatico<br/>Síntoma → Causa + Servicio + Urgencia"]:::tool
+                        TOOL2[" 📦 consultar_stock_neumaticos<br/>Medida + Marca + Tipo → Inventario"]:::tool
+                        TOOL3[" 📝 registrar_solicitud_servicio<br/>Cliente + Patente + Servicio + Descripción"]:::tool
+                    end
+
+                    subgraph " FLUJO DE ORQUESTACIÓN"
+                        DIR["Dirección del Flujo"]:::flow
+                        LOOP[" Bucle de decisión<br/>(múltiples tools por turno)"]:::flow
+                        PAR[" Llamadas paralelas<br/>a herramientas"]:::flow
+                    end
+
+                    USER([" Consulta del Usuario"]):::user
+
+                    USER -->|"¿Qué tiene mi neumático?"| AGENT
+                    AGENT -->|"Llama"| TOOL1
+                    TOOL1 -->|"Devuelve: Diagnóstico"| AGENT
+
+                    AGENT -->|"¿Tienen este repuesto?"| TOOL2
+                    TOOL2 -->|"Devuelve: Stock"| AGENT
+
+                    AGENT -->|"Quiero agendar"| TOOL3
+                    TOOL3 -->|"Devuelve: Confirmación"| AGENT
+
+                    AGENT <-->|"Actualiza"| STATE
+                    STATE <-->|"Persiste"| MEMORY
+
+                    AGENT -->|"Respuesta final"| RESP([" Respuesta al Usuario"]):::user
+
+                    style USER fill:#1a73e8,stroke:#4da6ff,color:#fff,font-weight:bold,stroke-width:3px
+                    style RESP fill:#1a73e8,stroke:#4da6ff,color:#fff,font-weight:bold,stroke-width:3px
+
+                    classDef center fill:#7b2ff7,stroke:#ce93d8,color:#fff,font-size:13px,font-weight:bold,stroke-width:3px
+                    classDef state fill:#5c6bc0,stroke:#9fa8da,color:#fff,font-size:12px,font-weight:bold,stroke-width:2px
+                    classDef tool fill:#e040fb,stroke:#ea80fc,color:#fff,font-size:12px,font-weight:bold,stroke-width:2px
+                    classDef flow fill:#37474f,stroke:#78909c,color:#fff,font-size:11px,font-weight:bold,stroke-width:1px
+            </div>
+        </div>
+
+        <!-- TABLA DE ORQUESTACIÓN -->
+        <h2> Componentes de Orquestación</h2>
+        <div class="diagram-card">
+            <table class="info-table">
+                <thead>
+                    <tr>
+                        <th>Componente</th>
+                        <th>Rol de Orquestación</th>
+                        <th>Orquesta a</th>
+                        <th>Notebook</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="badge badge-orchestrator">Orquestador</span></td>
+                        <td>LangChain / LangGraph — Coordina flujo completo</td>
+                        <td>Todos los componentes</td>
+                        <td>RAG1, RAG</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-gate">Cadena de Seguridad</span></td>
+                        <td>Orquesta validaciones en secuencia: PII → Ético → Rate → Injection</td>
+                        <td>4 filtros de seguridad</td>
+                        <td>RAG5</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-retrieval">Motor RAG</span></td>
+                        <td>Orquesta: Splitter → Embeddings → FAISS → Recuperación de contexto</td>
+                        <td>Text Splitter, Embeddings, Vector Store</td>
+                        <td>RAG1</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-llm">Motor de Razonamiento</span></td>
+                        <td>Orquesta: CoT → Zero/Few-Shot → LLM → Memoria conversacional</td>
+                        <td>GPT-4.1, Prompts, Memoria</td>
+                        <td>Chain_of_Thought, Notebook1</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-obs">Observabilidad</span></td>
+                        <td>Orquesta: Trazas LangSmith → Logging → Métricas → Clasificación</td>
+                        <td>LangSmith, Logger, Recolector</td>
+                        <td>RAG3</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-email">Notificaciones</span></td>
+                        <td>Orquesta: Reportes HTML → Gmail SMTP → Entrega</td>
+                        <td>Generador HTML, SMTP</td>
+                        <td>RAG4</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-external">Agente Multi-Herramienta</span></td>
+                        <td>Orquesta: Function Calling → Diagnóstico/Stock/Servicio → Respuesta</td>
+                        <td>3 herramientas especializadas</td>
+                        <td>3-agent-vulcanizacion</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- LEYENDA -->
+        <h2> Leyenda de Colores</h2>
+        <div class="diagram-card">
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #7b2ff7;"></div>
+                    <span>Orquestador Central</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ff9800;"></div>
+                    <span>Interfaz de Entrada</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #e53935;"></div>
+                    <span>Cadena de Seguridad</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ffb300;"></div>
+                    <span>Punto de Decisión</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #00bcd4;"></div>
+                    <span>Motor RAG / Retrieval</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ffd600;"></div>
+                    <span>Motor de Razonamiento / LLM</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #00c853;"></div>
+                    <span>Observabilidad</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ff6d00;"></div>
+                    <span>Notificaciones</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #e040fb;"></div>
+                    <span>Herramientas del Agente</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #b71c1c;"></div>
+                    <span>Bloqueo / Rechazo</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #1b5e20;"></div>
+                    <span>Éxito / Respuesta</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#7b2ff7',
+                primaryTextColor: '#ffffff',
+                primaryBorderColor: '#ce93d8',
+                lineColor: '#00d4ff',
+                secondaryColor: '#1a73e8',
+                tertiaryColor: '#ff9800',
+                fontSize: '16px',
+                fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif'
+            },
+            sequence: {
+                actorMargin: 100,
+                messageMargin: 60,
+                messageAlign: 'center',
+                mirrorActors: false,
+                fontSize: 15,
+                fontWeight: 600,
+                actorFontSize: 15,
+                actorFontWeight: 700,
+                noteFontSize: 14,
+                noteFontWeight: 600
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis',
+                nodeSpacing: 50,
+                rankSpacing: 50,
+                diagramPadding: 20
+            },
+            securityLevel: 'loose'
+        });
+    </script>
+</body>
+</html>
