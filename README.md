@@ -60,7 +60,7 @@ Muestra cómo el orquestador central (LangChain/LangGraph) coordina todos los co
 
 ---
 
-## 👤 Autor
+##  Autor
 
 **Jesús Cárdenas**  
 Estudiante de Ingeniería en Informática — Duoc UC Puerto Montt  
