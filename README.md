@@ -48,6 +48,18 @@ Capa de seguridad completa del agente con:
 
 ---
 
+##  Diagramas del Proyecto
+
+### Diagrama de Arquitectura
+Visualiza la arquitectura completa del sistema: capas de usuario, interfaz web, seguridad, agente RAG, sistema de recuperación, modelo IA, observabilidad y notificaciones. Incluye diagrama general, flujo de secuencia, mapa de tecnologías y tabla de componentes.
+> [`architecture-diagram.html`](./architecture-diagram.html)
+
+### Diagrama de Orquestación de Componentes
+Muestra cómo el orquestador central (LangChain/LangGraph) coordina todos los componentes del sistema: cadena de seguridad, motor RAG, razonamiento del LLM, observabilidad, notificaciones y herramientas del agente. Incluye diagrama general, secuencia temporal, pipeline con puntos de decisión y orquestación del agente multi-herramienta.
+> [`orchestration-diagram.html`](./orchestration-diagram.html)
+
+---
+
 ## 👤 Autor
 
 **Jesús Cárdenas**  
