@@ -140,56 +140,61 @@
 </head>
 <body>
     <div class="container">
-        <h1>🔧 Chat_Con_IA — Vulcanizadora Inteligente</h1>
+        <h1>Chat_Con_IA — Vulcanizadora Inteligente</h1>
         <p class="subtitle">Diagrama de Arquitectura del Sistema</p>
 
         <!-- DIAGRAMA 1: Arquitectura General -->
-        <h2>📐 Diagrama de Arquitectura General</h2>
+        <h2>Diagrama de Arquitectura General</h2>
         <div class="diagram-card">
             <div class="mermaid">
-                graph TB
-                    subgraph 👤 USUARIO
+                graph LR
+                    subgraph "USUARIO"
                         A[Cliente Final]:::user
                     end
 
-                    subgraph 🖥️ INTERFAZ WEB
-                        B[Streamlit / Flask<br/>Aplicación Web]:::interface
+                    subgraph "INTERFAZ WEB"
+                        B[Streamlit / Flask]:::interface
                     end
 
-                    subgraph 🛡️ CAPA DE SEGURIDAD
-                        C1[🔍 Detección de PII]:::security
-                        C2[🚫 Filtro Ético]:::security
-                        C3[⏱️ Rate Limiting<br/>10 req/min]:::security
-                        C4[💉 Anti Prompt Injection]:::security
+                    subgraph "SEGURIDAD"
+                        direction TB
+                        C1[Detector PII]:::security
+                        C2[Filtro Etico]:::security
+                        C3[Rate Limiter]:::security
+                        C4[Anti Injection]:::security
                     end
 
-                    subgraph 🤖 AGENTE RAG
-                        D1[🧠 LangChain / LangGraph<br/>Orquestador]:::agent
-                        D2[💭 Chain of Thought<br/>Motor de Razonamiento]:::agent
-                        D3[📝 Prompts Zero-Shot<br/>y Few-Shot]:::agent
+                    subgraph "AGENTE RAG"
+                        direction TB
+                        D1[Orquestador LangChain]:::agent
+                        D2[Chain of Thought]:::agent
+                        D3[Gestor de Prompts]:::agent
                     end
 
-                    subgraph 🔎 SISTEMA RAG
-                        E1[📦 FAISS<br/>Vector Store]:::retrieval
-                        E2[🔢 Embeddings<br/>tiktoken]:::retrieval
-                        E3[📚 Base de Conocimiento<br/>Servicios, Precios, Horarios]:::retrieval
+                    subgraph "SISTEMA RAG"
+                        direction TB
+                        E1[FAISS Vector Store]:::retrieval
+                        E2[Embeddings tiktoken]:::retrieval
+                        E3[Base de Conocimiento]:::retrieval
                     end
 
-                    subgraph 🌐 MODELO IA
-                        F[⚡ GitHub Models<br/>GPT-4.1 via Azure]:::llm
+                    subgraph "MODELO IA"
+                        F[GPT-4.1 via Azure]:::llm
                     end
 
-                    subgraph 📊 OBSERVABILIDAD
-                        G1[🔭 LangSmith<br/>Trazabilidad]:::observability
-                        G2[📝 Logging<br/>Estructurado]:::observability
-                        G3[📈 Métricas<br/>Tiempo, Tokens, Errores]:::observability
-                        G4[🏷️ Clasificación<br/>de Consultas]:::observability
+                    subgraph "OBSERVABILIDAD"
+                        direction TB
+                        G1[LangSmith Trazabilidad]:::observability
+                        G2[Logging Estructurado]:::observability
+                        G3[Metricas de Rendimiento]:::observability
+                        G4[Clasificador Consultas]:::observability
                     end
 
-                    subgraph 📧 NOTIFICACIONES
-                        H1[📄 Generador<br/>Reportes HTML]:::email
-                        H2[📬 Gmail SMTP]:::email
-                        H3[✉️ Email Destino]:::email
+                    subgraph "NOTIFICACIONES"
+                        direction TB
+                        H1[Generador Reportes]:::email
+                        H2[Gmail SMTP]:::email
+                        H3[Email Destino]:::email
                     end
 
                     A --> B
@@ -204,7 +209,7 @@
                     D3 --> F
                     E1 <--> E2
                     E2 <--> E3
-                    D3 <--> E1
+                    E1 --> G1
                     F --> G1
                     G1 --> G2
                     G2 --> G3
@@ -225,69 +230,72 @@
         </div>
 
         <!-- DIAGRAMA 2: Flujo de Secuencia -->
-        <h2>🔄 Flujo de Consulta - Secuencia</h2>
+        <h2>Flujo de Consulta - Secuencia</h2>
         <div class="diagram-card">
             <div class="mermaid">
                 sequenceDiagram
                     autonumber
-                    participant U as 👤 Usuario
-                    participant UI as 🖥️ Interfaz Web
-                    participant SEC as 🛡️ Seguridad
-                    participant AGT as 🤖 Agente RAG
-                    participant VDB as 📦 FAISS Vector DB
-                    participant LLM as ⚡ GPT-4.1
-                    participant OBS as 📊 LangSmith
-                    participant EMAIL as 📧 Gmail SMTP
+                    participant U as Usuario
+                    participant UI as Interfaz Web
+                    participant SEC as Seguridad
+                    participant AGT as Agente RAG
+                    participant VDB as FAISS Vector DB
+                    participant LLM as GPT-4.1
+                    participant OBS as LangSmith
+                    participant EMAIL as Gmail SMTP
 
-                    U->>UI: 📩 Consulta sobre servicio
-                    UI->>SEC: 🔒 Validar entrada
-                    SEC->>SEC: 🔍 Detección PII
-                    SEC->>SEC: ⏱️ Rate Limiting
-                    SEC->>SEC: 💉 Anti Injection
-                    SEC->>AGT: ✅ Consulta segura
-                    AGT->>VDB: 🔎 Buscar contexto relevante
-                    VDB-->>AGT: 📄 Documentos similares
-                    AGT->>AGT: 💭 Chain of Thought
-                    AGT->>LLM: 📤 Prompt con contexto
-                    LLM-->>AGT: 💬 Respuesta generada
-                    AGT->>OBS: 📊 Registrar traza y métricas
-                    AGT-->>UI: 💬 Respuesta al usuario
-                    UI-->>U: 🖨️ Mostrar respuesta
+                    U->>UI: Consulta sobre servicio
+                    UI->>SEC: Validar entrada
+                    SEC->>SEC: Deteccion PII
+                    SEC->>SEC: Rate Limiting
+                    SEC->>SEC: Anti Injection
+                    SEC->>AGT: Consulta segura
+                    AGT->>VDB: Buscar contexto relevante
+                    VDB-->>AGT: Documentos similares
+                    AGT->>AGT: Chain of Thought
+                    AGT->>LLM: Prompt con contexto
+                    LLM-->>AGT: Respuesta generada
+                    AGT->>OBS: Registrar traza y metricas
+                    AGT-->>UI: Respuesta al usuario
+                    UI-->>U: Mostrar respuesta
 
-                    note over OBS,EMAIL: 📈 Reportes periódicos
-                    OBS->>EMAIL: 📊 Enviar resumen métricas
-                    EMAIL-->>U: ✉️ Email con reporte
+                    note over OBS,EMAIL: Reportes periodicos
+                    OBS->>EMAIL: Enviar resumen metricas
+                    EMAIL-->>U: Email con reporte
             </div>
         </div>
 
         <!-- DIAGRAMA 3: Tecnologías -->
-        <h2>🛠️ Mapa de Tecnologías</h2>
+        <h2>Mapa de Tecnologias</h2>
         <div class="diagram-card">
             <div class="mermaid">
                 graph LR
-                    subgraph 🎨 FRONTEND
-                        A1[🌐 Streamlit]:::frontend
-                        A2[🌐 Flask]:::frontend
+                    subgraph "FRONTEND"
+                        A1[Streamlit]:::frontend
+                        A2[Flask]:::frontend
                     end
 
-                    subgraph ⚙️ BACKEND PYTHON
-                        B1[🔗 LangChain]:::backend
-                        B2[🔀 LangGraph]:::backend
-                        B3[👥 CrewAI]:::backend
-                        B4[✅ Pydantic]:::backend
-                        B5[📊 Pandas / NumPy]:::backend
+                    subgraph "BACKEND PYTHON"
+                        direction TB
+                        B1[LangChain]:::backend
+                        B2[LangGraph]:::backend
+                        B3[CrewAI]:::backend
+                        B4[Pydantic]:::backend
+                        B5[Pandas / NumPy]:::backend
                     end
 
-                    subgraph 💾 ALMACENAMIENTO
-                        C1[📦 FAISS CPU<br/>Vector Store]:::storage
-                        C2[🔑 .env Config<br/>Variables]:::storage
+                    subgraph "ALMACENAMIENTO"
+                        direction TB
+                        C1[FAISS CPU Vector Store]:::storage
+                        C2[.env Config Variables]:::storage
                     end
 
-                    subgraph ☁️ SERVICIOS EXTERNOS
-                        D1[🧠 GitHub Models API]:::external
-                        D2[☁️ Azure Inference]:::external
-                        D3[🔭 LangSmith Cloud<br/>Trazabilidad]:::external
-                        D4[📬 Gmail SMTP<br/>Email]:::external
+                    subgraph "SERVICIOS EXTERNOS"
+                        direction TB
+                        D1[GitHub Models API]:::external
+                        D2[Azure Inference]:::external
+                        D3[LangSmith Cloud]:::external
+                        D4[Gmail SMTP]:::external
                     end
 
                     A1 --> B1
@@ -309,7 +317,7 @@
         </div>
 
         <!-- TABLA DE COMPONENTES -->
-        <h2>📋 Componentes del Sistema</h2>
+        <h2>Componentes del Sistema</h2>
         <div class="diagram-card">
             <table class="info-table">
                 <thead>
@@ -368,7 +376,7 @@
         </div>
 
         <!-- LEYENDA -->
-        <h2>🎨 Leyenda de Colores</h2>
+        <h2>Leyenda de Colores</h2>
         <div class="diagram-card">
             <div class="legend">
                 <div class="legend-item">
