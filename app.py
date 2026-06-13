@@ -9,6 +9,7 @@ from dataclasses import dataclass, field
 from typing import List
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.utils import formataddr
 
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify, render_template
@@ -225,25 +226,33 @@ class RecolectorMetricas:
         }
 
 
+PATRON_EMAIL = re.compile(r"^[a-zA-Z0-9_.%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
+
+
 class EnviadorEmail:
     def __init__(self):
         self.gmail_user = os.getenv("GMAIL_USER")
         self.gmail_password = os.getenv("GMAIL_APP_PASSWORD")
         self.destino = os.getenv("EMAIL_DESTINO")
 
-    def enviar(self, asunto: str, cuerpo_html: str) -> bool:
+    def enviar(self, asunto: str, cuerpo_html: str, destino: str = None) -> bool:
         try:
+            destinatario = destino or self.destino
+            if not destinatario:
+                logger.error("No hay destinatario configurado")
+                return False
+
             msg = MIMEMultipart("alternative")
             msg["Subject"] = asunto
-            msg["From"] = self.gmail_user
-            msg["To"] = self.destino
+            msg["From"] = formataddr(("Vulcanizadora IA", self.gmail_user))
+            msg["To"] = destinatario
             msg.attach(MIMEText(cuerpo_html, "html"))
 
             with smtplib.SMTP_SSL("smtp.gmail.com", 465) as servidor:
                 servidor.login(self.gmail_user, self.gmail_password)
-                servidor.sendmail(self.gmail_user, self.destino, msg.as_string())
+                servidor.sendmail(self.gmail_user, destinatario, msg.as_string())
 
-            logger.info("Email enviado a %s", self.destino)
+            logger.info("Email enviado a %s", destinatario)
             return True
         except Exception as e:
             logger.error("Error al enviar email: %s", e)
@@ -435,11 +444,18 @@ def metricas():
 @app.route("/enviar-reporte", methods=["POST"])
 def enviar_reporte():
     try:
+        data = request.get_json() or {}
+        correo_destino = data.get("correo_destino", "").strip()
+
+        if not correo_destino or not PATRON_EMAIL.match(correo_destino):
+            return jsonify({"exito": False,
+                            "mensaje": "Debe ingresar un correo valido"}), 400
+
         email = EnviadorEmail()
         resumen = agente.metricas.resumen()
         html = generar_reporte_html(historial, resumen)
         asunto = f"Reporte Vulcanizadora IA - {datetime.now().strftime('%d/%m/%Y')}"
-        exito = email.enviar(asunto=asunto, cuerpo_html=html)
+        exito = email.enviar(asunto=asunto, cuerpo_html=html, destino=correo_destino)
         if exito:
             return jsonify({"exito": True,
                             "mensaje": "Reporte enviado correctamente"})

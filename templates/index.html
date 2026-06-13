@@ -61,6 +61,14 @@
                     </div>
                 </div>
 
+                <input
+                    type="email"
+                    id="correoDestino"
+                    class="email-input"
+                    placeholder="Correo del destinatario"
+                    autocomplete="email"
+                />
+
                 <button id="enviarReporteBtn" class="btn btn-secondary">
                     Enviar reporte por correo
                 </button>
@@ -143,15 +151,34 @@
             if (e.key === 'Enter') enviarMensaje();
         });
 
+        function validarEmail(email) {
+            return /^[a-zA-Z0-9_.%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
+        }
+
         enviarReporteBtn.addEventListener('click', function() {
+            var correo = document.getElementById('correoDestino').value.trim();
+            reporteMensaje.className = 'reporte-mensaje';
+
+            if (!correo) {
+                reporteMensaje.textContent = 'Debe ingresar un correo valido';
+                reporteMensaje.className = 'reporte-mensaje error';
+                return;
+            }
+
+            if (!validarEmail(correo)) {
+                reporteMensaje.textContent = 'Debe ingresar un correo valido';
+                reporteMensaje.className = 'reporte-mensaje error';
+                return;
+            }
+
             enviarReporteBtn.disabled = true;
             enviarReporteBtn.textContent = 'Enviando...';
             reporteMensaje.textContent = '';
-            reporteMensaje.className = 'reporte-mensaje';
 
             fetch('/enviar-reporte', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ correo_destino: correo })
             })
                 .then(function(r) { return r.json(); })
                 .then(function(data) {
