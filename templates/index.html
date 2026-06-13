@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vulcanizadora IA</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="app">
+        <header class="app-header">
+            <div class="header-content">
+                <h1 class="app-title">Vulcanizadora IA</h1>
+                <p class="app-subtitle">Asistente inteligente de taller de neumaticos</p>
+            </div>
+        </header>
+
+        <main class="main-layout">
+            <section class="chat-section">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message agent">
+                        <div class="message-bubble">
+                            Bienvenido a Vulcanizadora IA. Soy el asistente virtual del taller.
+                            Consulta por servicios, precios, horarios o recomendaciones sobre
+                            el cuidado de tus neumaticos.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-input-area">
+                    <input
+                        type="text"
+                        id="mensajeInput"
+                        class="chat-input"
+                        placeholder="Ej: Cuanto cuesta un parche interno..."
+                        autocomplete="off"
+                    />
+                    <button id="enviarBtn" class="btn btn-primary">Enviar</button>
+                </div>
+            </section>
+
+            <aside class="metrics-section">
+                <h2 class="metrics-title">Metricas en vivo</h2>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value" id="totalConsultas">0</div>
+                        <div class="metric-label">Consultas</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="tiempoPromedio">0 ms</div>
+                        <div class="metric-label">Tiempo promedio</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="tasaErrores">0 %</div>
+                        <div class="metric-label">Tasa de errores</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="totalTokens">0</div>
+                        <div class="metric-label">Tokens usados</div>
+                    </div>
+                </div>
+
+                <button id="enviarReporteBtn" class="btn btn-secondary">
+                    Enviar reporte por correo
+                </button>
+
+                <div id="reporteMensaje" class="reporte-mensaje"></div>
+            </aside>
+        </main>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chatMessages');
+        const mensajeInput = document.getElementById('mensajeInput');
+        const enviarBtn = document.getElementById('enviarBtn');
+        const enviarReporteBtn = document.getElementById('enviarReporteBtn');
+        const reporteMensaje = document.getElementById('reporteMensaje');
+
+        function agregarMensaje(texto, tipo) {
+            const div = document.createElement('div');
+            div.className = 'message ' + tipo;
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            bubble.textContent = texto;
+            div.appendChild(bubble);
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function actualizarMetricas() {
+            fetch('/metricas')
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    document.getElementById('totalConsultas').textContent =
+                        data.total_peticiones || 0;
+                    document.getElementById('tiempoPromedio').textContent =
+                        (data.tiempo_promedio_ms || 0) + ' ms';
+                    document.getElementById('tasaErrores').textContent =
+                        (data.tasa_errores_pct || 0) + ' %';
+                    document.getElementById('totalTokens').textContent =
+                        data.total_tokens || 0;
+                })
+                .catch(function(err) {
+                    console.error('Error al obtener metricas:', err);
+                });
+        }
+
+        function enviarMensaje() {
+            var mensaje = mensajeInput.value.trim();
+            if (!mensaje) return;
+
+            mensajeInput.value = '';
+            agregarMensaje(mensaje, 'user');
+            enviarBtn.disabled = true;
+            enviarBtn.textContent = 'Enviando...';
+
+            fetch('/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mensaje: mensaje })
+            })
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    agregarMensaje(data.respuesta, 'agent');
+                    actualizarMetricas();
+                })
+                .catch(function(err) {
+                    agregarMensaje(
+                        '[ERROR] No se pudo conectar con el servidor.',
+                        'agent'
+                    );
+                    console.error('Error en /chat:', err);
+                })
+                .finally(function() {
+                    enviarBtn.disabled = false;
+                    enviarBtn.textContent = 'Enviar';
+                });
+        }
+
+        enviarBtn.addEventListener('click', enviarMensaje);
+        mensajeInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') enviarMensaje();
+        });
+
+        enviarReporteBtn.addEventListener('click', function() {
+            enviarReporteBtn.disabled = true;
+            enviarReporteBtn.textContent = 'Enviando...';
+            reporteMensaje.textContent = '';
+            reporteMensaje.className = 'reporte-mensaje';
+
+            fetch('/enviar-reporte', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    reporteMensaje.textContent = data.mensaje;
+                    reporteMensaje.className = 'reporte-mensaje ' +
+                        (data.exito ? 'exito' : 'error');
+                })
+                .catch(function(err) {
+                    reporteMensaje.textContent = 'Error de conexion al enviar reporte.';
+                    reporteMensaje.className = 'reporte-mensaje error';
+                    console.error('Error en /enviar-reporte:', err);
+                })
+                .finally(function() {
+                    enviarReporteBtn.disabled = false;
+                    enviarReporteBtn.textContent = 'Enviar reporte por correo';
+                });
+        });
+
+        actualizarMetricas();
+    </script>
+</body>
+</html>
