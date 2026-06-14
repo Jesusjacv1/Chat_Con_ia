@@ -96,6 +96,87 @@ Muestra cómo el orquestador central (LangChain/LangGraph) coordina todos los co
 
 ---
 
+##  Despliegue en AWS
+
+### Demo en vivo
+
+La aplicación está desplegada y accesible públicamente en:
+
+- **URL:** [http://54.147.28.132:5000](http://54.147.28.132:5000)
+
+> **Nota:** El servicio corre sobre una instancia EC2 de **AWS Academy Learner Lab**, por lo que la disponibilidad puede estar sujeta a los límites de sesión del laboratorio educativo. La URL puede no estar activa fuera de los horarios de evaluación o demo coordinados.
+
+### Stack de despliegue
+
+| Componente | Detalle |
+|---|---|
+| Cloud provider | AWS (EC2, Academy Learner Lab) |
+| Sistema operativo | Amazon Linux 2023 |
+| Tipo de instancia | t3.micro |
+| Región | us-east-1 |
+| IP fija | Elastic IP |
+| Gestión del proceso | systemd (`vulcanizadora.service`, `Restart=always`, habilitado para arranque automático) |
+| Framework web | Flask, expuesto en puerto 5000, escuchando en `0.0.0.0` |
+
+### Cómo reproducir el despliegue (Setup en servidor)
+
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/Jesusjacv1/Chat_Con_ia.git
+cd Chat_Con_ia
+
+# 2. Instalar dependencias del sistema (Amazon Linux 2023)
+sudo dnf install -y python3-pip python3-devel git
+
+# 3. Instalar dependencias Python
+pip3 install --user flask openai python-dotenv
+
+# 4. Crear archivo .env con las variables de entorno necesarias
+#    (NO subir al repositorio — .env ya está en .gitignore)
+cat > .env << EOF
+GITHUB_TOKEN=tu_token_aqui
+OPENAI_BASE_URL=tu_base_url_aqui
+LANGSMITH_API_KEY=tu_langsmith_api_key
+LANGSMITH_TRACING=true
+LANGSMITH_PROJECT=tu_proyecto
+GMAIL_USER=tu_correo@gmail.com
+GMAIL_APP_PASSWORD=tu_contraseña_app
+EMAIL_DESTINO=destino@correo.com
+EOF
+
+# 5. Ejecutar la aplicación (modo desarrollo)
+python3 app.py
+
+# — O configurar como servicio systemd para producción —
+# sudo nano /etc/systemd/system/vulcanizadora.service
+# sudo systemctl enable vulcanizadora.service
+# sudo systemctl start vulcanizadora.service
+```
+
+### Arquitectura del despliegue
+
+```
+Usuario (navegador)
+       │
+       ▼
+  Elastic IP :5000
+       │
+       ▼
+  EC2 — Amazon Linux 2023
+       │
+       ▼
+  systemd → vulcanizadora.service
+       │
+       ▼
+  Flask App (app.py)
+       │
+       ├──► GPT-4.1 (GitHub Models / Azure)
+       ├──► LangSmith (observabilidad)
+       └──► SMTP Gmail (reportes por correo)
+```
+
+---
+
 ##  Autor
 
 **Jesús Cárdenas**  
